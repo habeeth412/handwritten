@@ -1,0 +1,67 @@
+import os
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+from tensorflow.keras.utils import plot_model  # Import plot_model
+
+# ... (rest of your code remains the same) ...
+
+# Visualize the model architecture
+plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+
+# Display the image
+img = plt.imread('model_plot.png')
+plt.imshow(img)
+plt.axis('off')
+plt.show()
+import os
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+
+# Paths
+train_dir = 'dataset/train'
+val_dir = 'dataset/validation'  # Adjust if your dataset has a different test/val folder
+
+# Image properties
+img_height, img_width = 28, 28
+batch_size = 32
+num_classes = 10
+
+# Data preprocessing
+train_datagen = ImageDataGenerator(rescale=1./255)
+val_datagen = ImageDataGenerator(rescale=1./255)
+
+train_generator = train_datagen.flow_from_directory(
+    train_dir,
+    target_size=(img_height, img_width),
+    color_mode='grayscale',
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=True
+)
+
+val_generator = val_datagen.flow_from_directory(
+    val_dir,
+    target_size=(img_height, img_width),
+    color_mode='grayscale',
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=False
+)
+
+# Model architecture
+model = Sequential([
+    Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 1)),
+    MaxPooling2D((2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dropout(0.5), # Added missing value.
+    Dense(num_classes, activation='softmax')
+])
